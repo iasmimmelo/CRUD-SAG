@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Controle Financeiro</h1>
+        <p>Cadastre e gerencie suas receitas e despesas</p>
+    </header>
+
+    <section class="usuario-box">
+        <div>
+            <h3 id="nomeUsuario"></h3>
+            <p>Bem-vindo ao seu controle financeiro</p>
+        </div>
+    </section>
+
+    <br><br>
+
+
+    <section class="resumo">
+        <div class="card receita">
+            <span>Receitas</span>
+            <strong id="totalReceitas">R$ 0,00</strong>
+        </div>
+        <div class="card despesa">
+            <span>Despesas</span>
+            <strong id="totalDespesas">R$ 0,00</strong>
+        </div>
+        <div class="card saldo">
+            <span>Saldo</span>
+            <strong id="totalSaldo">R$ 0,00</strong>
+        </div>
+    </section>
+
+    <section class="formulario">
+        <h2 id="formTitulo">Nova Movimentação</h2>
+        <form id="movimentacaoForm">
+            <input type="hidden" id="movimentacaoId">
+
+            <div class="campo">
+                <label for="descricao">Descrição</label>
+                <input type="text" id="descricao" placeholder="Ex: Salario, Aluguel..." required>
+            </div>
+
+            <div class="campo">
+                <label for="valor">Valor (R$)</label>
+                <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
+            </div>
+
+            <div class="campo">
+                <label for="tipo">Tipo</label>
+                <select id="tipo" required>
+                    <option value="RECEITA">Receita</option>
+                    <option value="DESPESA">Despesa</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="data">Data</label>
+                <input type="date" id="data" required>
+            </div>
+
+            <div class="acoes-form">
+                <button type="submit" id="btnSalvar">Salvar</button>
+                <button type="button" id="btnCancelar" class="secundario" style="display:none;">Cancelar</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="lista">
+        <h2>Movimentacoes</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Tipo</th>
+                <th>Data</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabelaCorpo"></tbody>
+        </table>
+        <p id="mensagemVazia" style="display:none;">Nenhuma movimentacao cadastrada ainda.</p>
+    </section>
+
+    <div id="chatbot">
+
+        <div id="chat-header" onclick="toggleChat()">
+            💬 Assistente Financeiro
+        </div>
+
+        <div id="chat-body">
+
+            <div id="chat-mensagens">
+                <div class="bot-msg">
+                    Olá! Sou seu assistente financeiro. Como posso ajudar?
+                </div>
+            </div>
+
+            <div id="chat-input-area">
+
+                <input
+                        type="text"
+                        id="chat-input"
+                        placeholder="Digite sua pergunta..."
+                        onkeydown="if(event.key === 'Enter') enviarMensagem()"
+                >
+
+                <button
+                        type="button"
+                        onclick="enviarMensagem()">
+                    Enviar
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <button onclick="sair()" class="btn-sair">
+        Sair
+    </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

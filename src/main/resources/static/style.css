@@ -1,0 +1,264 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background: #f2f4f7;
+    color: #1f2937;
+    padding: 24px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+header h1 {
+    font-size: 28px;
+    color: #111827;
+}
+
+header p {
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.resumo{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-top:30px;
+    margin-bottom:24px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card span {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.card strong { font-size: 20px; }
+.card.receita strong { color: #16a34a; }
+.card.despesa strong { color: #dc2626; }
+.card.saldo strong { color: #2563eb; }
+
+.formulario, .lista {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.formulario h2, .lista h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #111827;
+}
+
+#movimentacaoForm {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    align-items: end;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.campo label { font-size: 13px; color: #374151; }
+
+.campo input, .campo select {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.acoes-form {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+button:hover { background: #1d4ed8; }
+button.secundario { background: #e5e7eb; color: #374151; }
+button.secundario:hover { background: #d1d5db; }
+
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #eef0f2;
+    font-size: 14px;
+}
+
+th {
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.RECEITA { background: #dcfce7; color: #16a34a; }
+.badge.DESPESA { background: #fee2e2; color: #dc2626; }
+
+.acoes-linha { display: flex; gap: 8px; }
+.acoes-linha button { padding: 6px 12px; font-size: 13px; }
+.acoes-linha button.editar { background: #f59e0b; }
+.acoes-linha button.editar:hover { background: #d97706; }
+.acoes-linha button.excluir { background: #dc2626; }
+.acoes-linha button.excluir:hover { background: #b91c1c; }
+
+#mensagemVazia { text-align: center; color: #9ca3af; padding: 16px 0; }
+
+@media (max-width: 700px) {
+    #movimentacaoForm { grid-template-columns: 1fr; }
+    .resumo { grid-template-columns: 1fr; }
+}
+.usuario-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px; /* espaço entre o Olá e as receitas */
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+
+
+.usuario-box h3{
+
+    font-size:22px;
+
+    color:#2563eb;
+
+}
+
+
+.usuario-box p{
+
+    color:#666;
+
+    margin-top:5px;
+
+}
+
+
+.btn-sair{
+    background:#dc2626;
+    padding:12px 30px;
+    border-radius:8px;
+    width:200px;
+}
+
+#chatbot{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    margin-top:25px;
+    margin-bottom:25px;
+}
+
+#chat-header{
+    background:#2563eb;
+    color:white;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+#chat-body{
+    display:block;
+}
+
+#chat-mensagens{
+    min-height:150px;
+    max-height:250px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.bot-msg{
+    max-width:80%;
+    padding:12px;
+    background:#e5e7eb;
+    border-radius:18px 18px 18px 5px;
+    align-self:flex-start;
+    word-wrap:break-word;
+}
+
+.user-msg{
+    max-width:80%;
+    padding:12px;
+    background:#2563eb;
+    color:white;
+    border-radius:18px 18px 5px 18px;
+    align-self:flex-end;
+    word-wrap:break-word;
+}
+
+#chat-input-area{
+    display:flex;
+    border-top:1px solid #ddd;
+}
+
+#chat-input{
+    flex:1;
+    border:none;
+    padding:12px;
+    outline:none;
+}
+
+#chat-input-area button{
+    border-radius:0;
+}
+
+.btn-sair:hover{
+
+    background:#b91c1c;
+
+}
