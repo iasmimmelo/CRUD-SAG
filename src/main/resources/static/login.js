@@ -1,52 +1,36 @@
-const API = "/api/usuarios/login";
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
 
-document
-.getElementById("loginForm")
-.addEventListener("submit",
-async function(e){
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-    e.preventDefault();
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
 
-    const usuario = {
+            try {
+                const resposta = await fetch(`/api/usuarios/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
 
-        email:
-        document.getElementById("email").value,
+                if (!resposta.ok) {
+                    alert("E-mail ou senha inválidos!");
+                    return;
+                }
 
-        senha:
-        document.getElementById("senha").value
-    };
+                const usuario = await resposta.json();
+                localStorage.setItem("usuario", JSON.stringify(usuario));
 
-    const resposta =
-    await fetch(API,{
+                window.location.href = "index.html";
 
-        method:"POST",
-
-        headers:{
-            "Content-Type":
-            "application/json"
-        },
-
-        body:
-        JSON.stringify(usuario)
-    });
-
-    if(resposta.ok){
-
-        const dados =
-        await resposta.json();
-
-        localStorage.setItem(
-            "usuario",
-            JSON.stringify(dados)
-        );
-
-        window.location.href =
-            "index.html";
-
-    }else{
-
-        alert(
-            "Email ou senha incorretos"
-        );
+            } catch (error) {
+                console.error("Erro no login:", error);
+                alert("Erro ao conectar com o servidor.");
+            }
+        });
     }
 });

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Assistente Financeiro</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Assistente Financeiro</h1>
+
+    <p>Tire suas dúvidas</p>
+
+</header>
+
+<div class="container">
+
+    <div class="menu-container">
+
+        <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+        <div id="menuOpcoes" class="menu-opcoes">
+
+            <a href="index.html">Início</a>
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="chatbot.html">Assistente</a>
+
+            <button class="btn-sair-menu" onclick="sair()">Sair</button>
+
+        </div>
+
+    </div>
+
+    <div id="chatbot">
+
+        <div id="chat-header">
+
+            Assistente Financeiro
+
+        </div>
+
+        <div id="chat-mensagens">
+
+            <div class="bot-msg">
+
+                Olá! Sou seu assistente financeiro.
+
+                Faça uma pergunta.
+
+            </div>
+
+        </div>
+
+        <div id="chat-input-area">
+
+            <input
+
+                    id="chat-input"
+
+                    type="text"
+
+                    placeholder="Digite sua pergunta..."
+
+                    onkeydown="if(event.key==='Enter') enviarMensagem()">
+
+            <button onclick="enviarMensagem()">
+
+                Enviar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="chatbot.js"></script>
+
+</body>
+
+</html> 

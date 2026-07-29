@@ -1,91 +1,182 @@
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+const usuarioStorage = localStorage.getItem("usuario");
+const usuario = usuarioStorage ? JSON.parse(usuarioStorage) : null;
 
 if (!usuario) {
     window.location.href = "login.html";
 }
 
 const usuarioId = usuario.id;
+const API_URL = "/api/movimentacoes?usuarioId=" + usuarioId;
 
-const API_URL = `/api/movimentacoes?usuarioId=${usuarioId}`;
+const form = document.getElementById("movimentacaoForm");
+const tabelaCorpo = document.getElementById("tabelaCorpo");
+const mensagemVazia = document.getElementById("mensagemVazia");
+const btnCancelar = document.getElementById("btnCancelar");
+const formTitulo = document.getElementById("formTitulo");
+const mesSelecionado = document.getElementById("mesSelecionado");
 
-const form = document.getElementById('movimentacaoForm');
-const tabelaCorpo = document.getElementById('tabelaCorpo');
-const mensagemVazia = document.getElementById('mensagemVazia');
-const btnCancelar = document.getElementById('btnCancelar');
-const formTitulo = document.getElementById('formTitulo');
+let movimentacoes = [];
+let listaFiltradaAtual = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    const nomeUsuario = document.getElementById("nomeUsuario");
-    if(nomeUsuario){
-        nomeUsuario.innerHTML = "Olá, " + usuario.nome;
+    // Nome do usuário em maiúsculo (conforme solicitado anteriormente)
+    const nomeEl = document.getElementById("nomeUsuario");
+    if (nomeEl && usuario.nome) {
+        nomeEl.innerHTML = `Olá, ${usuario.nome.toUpperCase()}!`;
     }
+
+    const campoData = document.getElementById("data");
+    if (campoData) {
+        campoData.value = new Date().toISOString().split("T")[0];
+    }
+
+    if (mesSelecionado) {
+        mesSelecionado.value = new Date().toISOString().slice(0, 7);
+        mesSelecionado.addEventListener("change", carregarMovimentacoes);
+    }
+
     carregarMovimentacoes();
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
 });
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    await salvarMovimentacao();
-});
-
-btnCancelar.addEventListener('click', resetarFormulario);
-
-async function carregarMovimentacoes() {
+async function carregarMovimentacoes(){
     try {
         const resposta = await fetch(API_URL);
-        if (!resposta.ok) {
-            const erro = await resposta.text();
-            throw new Error(erro);
-        }
-        const movimentacoes = await resposta.json();
-        renderizarTabela(movimentacoes);
-        atualizarResumo(movimentacoes);
-    } catch (erro) {
-        console.error(erro);
-        alert("Erro ao carregar movimentações");
+        if (!resposta.ok) throw new Error("Erro ao carregar");
+        movimentacoes = await resposta.json();
+        atualizarTela();
+    } catch (e) {
+        console.error(e);
     }
 }
 
-function renderizarTabela(movimentacoes){
+function atualizarTela(){
+    const mes = mesSelecionado ? mesSelecionado.value : "";
+    const listaMes = movimentacoes.filter(m => m.data.startsWith(mes));
+
+    listaFiltradaAtual = listaMes;
+    renderizarTabela(listaFiltradaAtual);
+    atualizarResumoMes(listaMes);
+    atualizarResumoTotal(movimentacoes);
+}
+
+function renderizarTabela(lista){
     tabelaCorpo.innerHTML = "";
-    if(movimentacoes.length === 0){
+
+    if(lista.length === 0){
         mensagemVazia.style.display = "block";
         return;
     }
     mensagemVazia.style.display = "none";
-    movimentacoes.forEach(mov => {
-        const linha = document.createElement("tr");
-        linha.innerHTML = `
-        <td>${mov.descricao}</td>
-        <td>${formatarMoeda(mov.valor)}</td>
-        <td>${mov.tipo}</td>
-        <td>${formatarData(mov.data)}</td>
-        <td>
-        <button onclick="editarMovimentacao(${mov.id})">Editar</button>
-        <button onclick="excluirMovimentacao(${mov.id})">Excluir</button>
-        </td>
+
+    lista.forEach(m => {
+        tabelaCorpo.innerHTML += `
+            <tr>
+                <td>${m.descricao}</td>
+                <td>${formatarMoeda(m.valor)}</td>
+                <td>${m.tipo}</td>
+                <td>${formatarData(m.data)}</td>
+                <td>
+                    <button onclick="editarMovimentacao(${m.id})">Editar</button>
+                    <button onclick="excluirMovimentacao(${m.id})">Excluir</button>
+                </td>
+            </tr>
         `;
-        tabelaCorpo.appendChild(linha);
     });
 }
 
-function atualizarResumo(movimentacoes){
-    const receitas = movimentacoes
-        .filter(m => m.tipo === "RECEITA")
-        .reduce((s,m) => s + Number(m.valor), 0);
+function atualizarResumoMes(lista){
+    let receitas = 0;
+    let despesas = 0;
 
-    const despesas = movimentacoes
-        .filter(m => m.tipo === "DESPESA")
-        .reduce((s,m) => s + Number(m.valor), 0);
+    lista.forEach(m => {
+        if(m.tipo === "RECEITA") receitas += Number(m.valor);
+        else despesas += Number(m.valor);
+    });
+
+    document.getElementById("receitasMes").innerHTML = formatarMoeda(receitas);
+    document.getElementById("despesasMes").innerHTML = formatarMoeda(despesas);
+    document.getElementById("saldoMes").innerHTML = formatarMoeda(receitas - despesas);
+}
+
+function atualizarResumoTotal(lista){
+    let receitas = 0;
+    let despesas = 0;
+
+    lista.forEach(m => {
+        if(m.tipo === "RECEITA") receitas += Number(m.valor);
+        else despesas += Number(m.valor);
+    });
 
     document.getElementById("totalReceitas").innerHTML = formatarMoeda(receitas);
     document.getElementById("totalDespesas").innerHTML = formatarMoeda(despesas);
     document.getElementById("totalSaldo").innerHTML = formatarMoeda(receitas - despesas);
+    document.getElementById("totalMovimentacoes").innerHTML = lista.length;
 }
 
-async function salvarMovimentacao(){
-    const id = document.getElementById("movimentacaoId").value;
+// ==========================================
+// FILTRO DE PESQUISA POR DESCRIÇÃO (ITEM 3)
+// ==========================================
+function filtrarPorDescricao() {
+    const termo = document.getElementById("inputPesquisa").value.toLowerCase();
+    const filtrados = listaFiltradaAtual.filter(m => m.descricao.toLowerCase().includes(termo));
+    renderizarTabela(filtrados);
+}
 
+// ==========================================
+// ORDENAÇÃO DA TABELA (ITEM 4)
+// ==========================================
+function ordenarTabela(criterio) {
+    let lista = [...listaFiltradaAtual];
+
+    if (criterio === "recente") {
+        lista.sort((a, b) => new Date(b.data) - new Date(a.data));
+    } else if (criterio === "antigo") {
+        lista.sort((a, b) => new Date(a.data) - new Date(b.data));
+    } else if (criterio === "maior_valor") {
+        lista.sort((a, b) => Number(b.valor) - Number(a.valor));
+    } else if (criterio === "menor_valor") {
+        lista.sort((a, b) => Number(a.valor) - Number(b.valor));
+    } else if (criterio === "receitas") {
+        lista = lista.filter(m => m.tipo === "RECEITA");
+    } else if (criterio === "despesas") {
+        lista = lista.filter(m => m.tipo === "DESPESA");
+    }
+
+    renderizarTabela(lista);
+}
+
+// ==========================================
+// EXPORTAÇÃO (ITEM 7)
+// ==========================================
+function imprimirPagina() {
+    window.print();
+}
+
+function exportarExcel() {
+    let csv = "Descricao,Valor,Tipo,Data\n";
+    listaFiltradaAtual.forEach(m => {
+        csv += `"${m.descricao}",${m.valor},${m.tipo},${m.data}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'movimentacoes.csv';
+    a.click();
+}
+
+// ==========================================
+// FORMULÁRIO E AÇÕES
+// ==========================================
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+    salvarMovimentacao();
+});
+
+if(btnCancelar) btnCancelar.addEventListener("click", resetarFormulario);
+
+async function salvarMovimentacao() {
+    const id = document.getElementById("movimentacaoId").value;
     const movimentacao = {
         descricao: document.getElementById("descricao").value,
         valor: Number(document.getElementById("valor").value),
@@ -94,7 +185,7 @@ async function salvarMovimentacao(){
         usuario: { id: usuarioId }
     };
 
-    const url = id ? `/api/movimentacoes/${id}` : "/api/movimentacoes";
+    const url = id ? "/api/movimentacoes/" + id : "/api/movimentacoes";
     const metodo = id ? "PUT" : "POST";
 
     const resposta = await fetch(url, {
@@ -103,16 +194,17 @@ async function salvarMovimentacao(){
         body: JSON.stringify(movimentacao)
     });
 
-    if(resposta.ok){
+    if (resposta.ok) {
+        alert(id ? "✔ Movimentação atualizada." : "✔ Movimentação salva.");
         resetarFormulario();
         carregarMovimentacoes();
-    }else{
-        alert("Erro ao salvar");
+    } else {
+        alert("Erro ao salvar movimentação.");
     }
 }
 
-async function editarMovimentacao(id){
-    const resposta = await fetch(`/api/movimentacoes/${id}`);
+async function editarMovimentacao(id) {
+    const resposta = await fetch("/api/movimentacoes/" + id);
     const mov = await resposta.json();
 
     document.getElementById("movimentacaoId").value = mov.id;
@@ -121,84 +213,58 @@ async function editarMovimentacao(id){
     document.getElementById("tipo").value = mov.tipo;
     document.getElementById("data").value = mov.data;
 
-    formTitulo.innerHTML = "Editar movimentação";
+    formTitulo.innerHTML = "Editar Movimentação";
+    btnCancelar.style.display = "inline-block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-async function excluirMovimentacao(id){
-    if(!confirm("Excluir movimentação?")) return;
+async function excluirMovimentacao(id) {
+    if (!confirm("Deseja realmente excluir?\n\n[Cancelar] [Excluir]")) return;
 
-    await fetch(`/api/movimentacoes/${id}`, { method: "DELETE" });
+    await fetch("/api/movimentacoes/" + id, { method: "DELETE" });
     carregarMovimentacoes();
 }
 
-function resetarFormulario(){
+function resetarFormulario() {
     form.reset();
     document.getElementById("movimentacaoId").value = "";
-    formTitulo.innerHTML = "Nova movimentação";
+    document.getElementById("data").value = new Date().toISOString().split("T")[0];
+    formTitulo.innerHTML = "Nova Movimentação";
+    btnCancelar.style.display = "none";
 }
 
 function formatarMoeda(valor){
-    return Number(valor).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    });
+    return Number(valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function formatarData(dataStr){
-    if(!dataStr) return "";
-    const [ano, mes, dia] = dataStr.split("-");
-    return `${dia}/${mes}/${ano}`;
+function formatarData(data){
+    const partes = data.split("-");
+    return partes[2] + "/" + partes[1] + "/" + partes[0];
 }
 
-function toggleChat(){
-    const corpo = document.getElementById("chat-body");
-    corpo.style.display = (corpo.style.display === "none") ? "block" : "none";
+function toggleMenu() {
+    const menu = document.getElementById("menuOpcoes");
+    if(menu) menu.classList.toggle("mostrar");
 }
 
-function adicionarMensagem(texto, classe){
-    const mensagens = document.getElementById("chat-mensagens");
-    const div = document.createElement("div");
-    div.className = classe;
-    div.innerHTML = texto;
-    mensagens.appendChild(div);
-    mensagens.scrollTop = mensagens.scrollHeight;
-}
-
-function gerarResposta(pergunta){
-    const receitas = document.getElementById("totalReceitas").innerText;
-    const despesas = document.getElementById("totalDespesas").innerText;
-    const saldo = document.getElementById("totalSaldo").innerText;
-
-    pergunta = pergunta.toLowerCase();
-
-    if(pergunta.includes("saldo")) return `Seu saldo atual é ${saldo}`;
-    if(pergunta.includes("despesa") || pergunta.includes("gastei")) return `Você possui ${despesas} em despesas cadastradas.`;
-    if(pergunta.includes("receita") || pergunta.includes("recebi")) return `Você possui ${receitas} em receitas cadastradas.`;
-    if(pergunta.includes("editar")) return "Clique no botão Editar da movimentação desejada.";
-    if(pergunta.includes("excluir")) return "Clique em Excluir na movimentação que deseja remover.";
-
-    return "Ainda não sei responder essa pergunta.";
-}
-
-function enviarMensagem(){
-    const input = document.getElementById("chat-input");
-    const pergunta = input.value.trim();
-
-    if(pergunta === "") return;
-
-    adicionarMensagem(pergunta, "user-msg");
-
-    const resposta = gerarResposta(pergunta);
-
-    setTimeout(() => {
-        adicionarMensagem(resposta, "bot-msg");
-    }, 300);
-
-    input.value = "";
-    input.focus();
-}
+window.addEventListener("click", function(e){
+    const menu = document.getElementById("menuOpcoes");
+    const btn = document.querySelector(".menu-btn");
+    if(menu && btn && !menu.contains(e.target) && !btn.contains(e.target)){
+        menu.classList.remove("mostrar");
+    }
+});
 
 function sair(){
-    localStorage.removeItem("usuario");
-    window.location.href = "login.html";
+    if(confirm("Deseja sair do sistema?")) {
+        localStorage.removeItem("usuario");
+        window.location.href = "login.html";
+    }
 }
+
+window.sair = sair;
+window.toggleMenu = toggleMenu;
+window.filtrarPorDescricao = filtrarPorDescricao;
+window.ordenarTabela = ordenarTabela;
+window.imprimirPagina = imprimirPagina;
+window.exportarExcel = exportarExcel;

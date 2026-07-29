@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+
+
+<head>
+
+
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <title>Dashboard Financeiro</title>
+
+
+
+    <link rel="stylesheet" href="style.css">
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="chatbot.js"></script>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<div class="container">
+
+
+
+    <header>
+
+
+
+        <h1>Dashboard Financeiro</h1>
+
+
+
+        <p>Visualize seus resultados financeiros</p>
+
+
+
+    </header>
+
+
+
+    <div class="menu-container">
+
+
+
+        <button class="menu-btn" onclick="toggleMenu()">
+
+            ☰ Menu
+
+        </button>
+
+
+
+        <div id="menuOpcoes" class="menu-opcoes">
+
+
+
+            <a href="index.html">Início</a>
+
+
+
+            <a href="dashboard.html">Dashboard</a>
+
+
+
+            <a href="chatbot.html">Assistente</a>
+
+
+
+            <button class="btn-sair-menu" onclick="sair()">
+
+                Sair
+
+            </button>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+    <!-- FILTRO -->
+    <section class="filtro-mes">
+        <h2>Selecionar Mês</h2>
+        <input type="month" id="mesSelecionado">
+    </section>
+
+
+
+    <!-- RESUMO DO MÊS -->
+
+
+
+    <section class="resumo">
+
+
+
+        <div class="card receita">
+
+
+
+            <span>Receitas do Mês</span>
+
+
+
+            <strong id="receitaMes">
+
+                R$ 0,00
+
+            </strong>
+
+
+
+        </div>
+
+
+
+        <div class="card despesa">
+
+
+
+            <span>Despesas do Mês</span>
+
+
+
+            <strong id="despesaMes">
+
+                R$ 0,00
+
+            </strong>
+
+
+
+        </div>
+
+
+
+        <div class="card saldo">
+
+
+
+            <span>Saldo do Mês</span>
+
+
+
+            <strong id="saldoMes">
+
+                R$ 0,00
+
+            </strong>
+
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+
+
+
+
+    <!-- GRÁFICOS -->
+
+
+
+    <div class="dashboard-grid">
+
+
+
+        <div class="grafico">
+
+
+
+            <h3>Receitas × Despesas</h3>
+
+
+
+            <canvas id="graficoBarra"></canvas>
+
+
+
+        </div>
+
+
+
+        <div class="grafico">
+
+
+
+            <h3>Distribuição Financeira</h3>
+
+
+
+            <canvas id="graficoPizza"></canvas>
+
+
+
+        </div>
+
+        <!-- RESUMO GERAL -->
+
+
+        <section class="mes-anterior">
+
+
+
+            <h2>Resumo Geral</h2>
+
+
+
+            <div class="cards-mes">
+
+
+
+                <div class="card receita">
+
+
+
+                    <span>Total de Receitas</span>
+
+
+
+                    <strong id="cardReceita">
+
+                        R$ 0,00
+
+                    </strong>
+
+
+
+                </div>
+
+
+
+                <div class="card despesa">
+
+
+
+                    <span>Total de Despesas</span>
+
+
+
+                    <strong id="cardDespesa">
+
+                        R$ 0,00
+
+                    </strong>
+
+
+
+                </div>
+
+
+
+                <div class="card saldo">
+
+
+
+                    <span>Saldo Total</span>
+
+
+
+                    <strong id="cardSaldo">
+
+                        R$ 0,00
+
+                    </strong>
+
+
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+
+        <div class="grafico">
+
+
+
+            <h3>Movimentações por Mês</h3>
+
+
+
+            <canvas id="graficoMes"></canvas>
+
+
+
+        </div>
+
+
+
+        <div class="grafico">
+
+
+
+            <h3>Evolução do Saldo</h3>
+
+
+
+            <canvas id="graficoSaldo"></canvas>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+</div>
+
+
+
+<script src="dashboard.js"></script>
+
+
+
+</body>
+
+
+
+</html>
+
+
+
+

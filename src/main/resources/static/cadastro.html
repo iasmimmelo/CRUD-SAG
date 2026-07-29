@@ -1,83 +1,108 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Cadastro - Controle Financeiro</title>
+
+    <meta name="viewport"
+
+          content="width=device-width, initial-scale=1">
+
+    <title>Cadastro</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
 
+<body class="tela-login">
 
-<body>
+<div class="login-container">
 
-<div class="container">
-
-    <section class="formulario">
+    <div class="login-card">
 
         <h1>Controle Financeiro</h1>
 
-        <h2>Criar conta</h2>
+        <p class="subtitulo">
 
+            Crie sua conta gratuitamente
+
+        </p>
 
         <form id="cadastroForm">
 
-
             <div class="campo">
+
                 <label>Nome</label>
+
                 <input
+
                         type="text"
+
                         id="nome"
-                        placeholder="Digite seu nome"
+
                         required>
+
             </div>
 
-
-
             <div class="campo">
+
                 <label>Email</label>
+
                 <input
+
                         type="email"
+
                         id="email"
-                        placeholder="Digite seu email"
+
                         required>
+
             </div>
-
-
 
             <div class="campo">
+
                 <label>Senha</label>
+
                 <input
+
                         type="password"
+
                         id="senha"
-                        placeholder="Digite sua senha"
+
                         required>
+
             </div>
 
+            <button
 
+                    type="submit"
 
-            <button type="submit">
-                Cadastrar
+                    class="btn-principal">
+
+                Criar Conta
+
             </button>
-
 
         </form>
 
+        <div class="links-login">
 
-        <br>
+            Já possui conta?
 
+            <a href="login.html">
 
-        <a href="login.html">
-            Já tenho uma conta
-        </a>
+                Entrar
 
+            </a>
 
-    </section>
+        </div>
+
+    </div>
 
 </div>
 
-
 <script src="cadastro.js"></script>
-
 
 </body>
 
