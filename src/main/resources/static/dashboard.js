@@ -16,7 +16,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         const inputMes = document.getElementById("mesSelecionado");
 
-        // Define o mês atual (AAAA-MM) obrigatoriamente
         const hoje = new Date();
         const ano = hoje.getFullYear();
         const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -57,20 +56,18 @@
         const saldoValores = [];
         let saldo = 0;
 
-        // Ordena as movimentações por data
+
         listaMovimentacoes.sort((a, b) => new Date(a.data) - new Date(b.data));
 
         listaMovimentacoes.forEach(m => {
             const valor = Number(m.valor) || 0;
 
-            // Extrai a parte da data com segurança (independente de vir ISO string ou "YYYY-MM-DD")
             let dataStr = "";
             if (m.data) {
                 dataStr = String(m.data).substring(0, 10);
             }
             const mesAnoMov = dataStr.substring(0, 7); // "YYYY-MM"
 
-            // Totais Gerais
             if (String(m.tipo).toUpperCase() === "RECEITA") {
                 receitasTotal += valor;
                 saldo += valor;
@@ -82,7 +79,6 @@
             saldoDatas.push(formatarData(dataStr));
             saldoValores.push(saldo);
 
-            // Resumo do Mês Selecionado (compara de forma flexível)
             if (mesSelecionado && mesAnoMov === mesSelecionado) {
                 if (String(m.tipo).toUpperCase() === "RECEITA") {
                     receitasMes += valor;
@@ -91,7 +87,6 @@
                 }
             }
 
-            // Gráfico por Mês
             if (mesAnoMov) {
                 if (!meses[mesAnoMov]) meses[mesAnoMov] = 0;
                 if (String(m.tipo).toUpperCase() === "RECEITA") {
@@ -102,7 +97,6 @@
             }
         });
 
-        // Atualiza os elementos na tela com segurança
         setTexto("receitaMes", formatarMoeda(receitasMes));
         setTexto("despesaMes", formatarMoeda(despesasMes));
         setTexto("saldoMes", formatarMoeda(receitasMes - despesasMes));

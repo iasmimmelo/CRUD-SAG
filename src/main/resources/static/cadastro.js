@@ -11,15 +11,12 @@ document
         const usuario = {
 
             nome:
-
             document.getElementById("nome").value,
 
             email:
-
             document.getElementById("email").value,
 
             senha:
-
             document.getElementById("senha").value
 
         };
@@ -31,9 +28,7 @@ document
                 method:"POST",
 
                 headers:{
-
                     "Content-Type":"application/json"
-
                 },
 
                 body:
@@ -45,7 +40,6 @@ document
             if(resposta.ok){
 
                 alert("Usuário cadastrado com sucesso!");
-
                 window.location.href="login.html";
 
             }else{
@@ -57,7 +51,6 @@ document
         } catch(error){
 
             console.log(error);
-
             alert("Servidor indisponível");
 
         }

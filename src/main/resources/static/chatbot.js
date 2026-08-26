@@ -11,9 +11,8 @@ let receitasGeral = "R$ 0,00";
 let despesasGeral = "R$ 0,00";
 let saldoGeral = "R$ 0,00";
 
-// Estados de controle do fluxo interativo
-let aguardandoEscopoGeralOuMes = null; // Guarda "saldo", "receita" ou "despesa"
-let aguardandoQualMes = null;         // Guarda "saldo", "receita" ou "despesa" para saber qual mês buscar depois
+let aguardandoEscopoGeralOuMes = null;
+let aguardandoQualMes = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
     await carregarDados();
@@ -49,7 +48,6 @@ async function carregarDados(){
     }
 }
 
-// Identifica meses aceitando com ou sem acento (ex: março ou marco)
 function identificarMesNaPergunta(pergunta) {
     const mesesMap = {
         "janeiro": "01", "jan": "01",
@@ -77,7 +75,6 @@ function identificarMesNaPergunta(pergunta) {
     return null;
 }
 
-// Calcula valores filtrados por mês
 function calcularResumoMes(mesAlvo) {
     let r = 0;
     let d = 0;
@@ -108,10 +105,9 @@ function gerarResposta(perguntaOriginal){
     const pergunta = perguntaOriginal.toLowerCase();
     const perguntaNormalizada = pergunta.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    // PASSO 3: O usuário respondeu qual mês específico ele quer ver
     if (aguardandoQualMes) {
         const tipoAtual = aguardandoQualMes;
-        aguardandoQualMes = null; // Reseta o estado
+        aguardandoQualMes = null;
 
         const mesIdentificado = identificarMesNaPergunta(pergunta);
         if (mesIdentificado) {
@@ -124,19 +120,16 @@ function gerarResposta(perguntaOriginal){
         return "Não consegui identificar o mês informado. Por favor, faça a pergunta novamente.";
     }
 
-    // PASSO 2: O usuário respondeu se quer "mes" (com ou sem acento) ou "geral"
     if (aguardandoEscopoGeralOuMes) {
         const tipoAtual = aguardandoEscopoGeralOuMes;
-        aguardandoEscopoGeralOuMes = null; // Reseta o estado
+        aguardandoEscopoGeralOuMes = null;
 
-        // Se respondeu "geral" -> exibe apenas o total geral acumulado
         if (perguntaNormalizada.includes("geral") || perguntaNormalizada.includes("todo")) {
             if (tipoAtual === "saldo") return "O saldo geral (total de todos os meses) é de " + saldoGeral + ".";
             if (tipoAtual === "receita") return "O total geral de receitas de todos os meses é de " + receitasGeral + ".";
             if (tipoAtual === "despesa") return "O total geral de despesas de todos os meses é de " + despesasGeral + ".";
         }
 
-        // Se respondeu "mes" ou "mês" (aceita com ou sem acento)
         if (perguntaNormalizada.includes("mes")) {
             aguardandoQualMes = tipoAtual; // Ativa a espera pelo mês específico
             return "Qual mês em específico você deseja ver?";
@@ -145,7 +138,6 @@ function gerarResposta(perguntaOriginal){
         return "Não consegui entender. Por favor, responda se deseja ver por 'mês' ou 'geral'.";
     }
 
-    // PASSO 1: O usuário digitou o mês direto na primeira pergunta (ex: "quanto gastei em março")
     const mesIdentificadoDireto = identificarMesNaPergunta(pergunta);
     if (mesIdentificadoDireto) {
         const dadosMes = calcularResumoMes(mesIdentificadoDireto);
@@ -164,7 +156,7 @@ function gerarResposta(perguntaOriginal){
     }
 
 // ===========================
-// PERGUNTAS DE SALDO, RECEITA OU DESPESA SEM MÊS (DISPARA A PERGUNTA INTERATIVA)
+// PERGUNTAS DE SALDO, RECEITA OU DESPESA SEM MÊS
 // ===========================
 
     if (

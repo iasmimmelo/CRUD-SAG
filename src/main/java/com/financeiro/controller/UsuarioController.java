@@ -14,14 +14,11 @@ import java.util.List;
 @CrossOrigin("*")
 public class UsuarioController {
 
-
     private final UsuarioService service;
-
 
     public UsuarioController(UsuarioService service){
         this.service = service;
     }
-
 
 
     @GetMapping
@@ -32,14 +29,12 @@ public class UsuarioController {
     }
 
 
-
     @PostMapping
     public Usuario criar(@RequestBody Usuario usuario){
 
         return service.salvar(usuario);
 
     }
-
 
 
     @PostMapping("/login")
